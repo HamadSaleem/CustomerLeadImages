@@ -1,0 +1,21 @@
+
+@model IEnumerable<CustomerLeadImages.Models.ProfileImage>
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Gallery";
+    var title = ViewBag.Title as string ?? "Gallery";
+}
+<h2 class="mb-3">@title</h2>
+<div class="row g-3">
+@foreach (var img in Model)
+{
+    <div class="col-12 col-md-6 col-lg-4">
+        <div class="card shadow-sm h-100">
+            <img class="card-img-top" src="data:@img.MimeType;base64,@img.Base64Data" />
+            <div class="card-body p-2">
+                <small class="text-muted">@img.CreatedOn.ToLocalTime().ToString("g")</small>
+            </div>
+        </div>
+    </div>
+}
+</div>

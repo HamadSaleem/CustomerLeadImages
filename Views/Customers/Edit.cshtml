@@ -1,0 +1,17 @@
+
+@model CustomerLeadImages.Models.Customer
+@{
+    ViewData["Title"] = "Edit Customer";
+}
+<h2>Edit Customer</h2>
+<form method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id"/>
+    <div class="mb-3">
+        <label class="form-label">Name</label>
+        <input asp-for="Name" class="form-control"/>
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a href="/Customers" class="btn btn-secondary">Cancel</a>
+</form>

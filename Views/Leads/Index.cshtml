@@ -1,0 +1,65 @@
+
+@model IEnumerable<CustomerLeadImages.Models.OwnerListItem>
+@{
+    ViewData["Title"] = "Leads";
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2 class="m-0">Leads</h2>
+  <a href="/Leads/Create" class="btn btn-primary">Add</a>
+</div>
+<table class="table table-bordered align-middle">
+<thead><tr><th>Id</th><th>Company</th><th>Images</th><th style="width:320px"></th></tr></thead>
+<tbody>
+@foreach (var c in Model)
+{
+<tr data-id="@c.Id">
+<td>@c.Id</td>
+<td>@c.Title</td>
+<td>@c.ImageCount</td>
+<td class="d-flex gap-2">
+   <a class="btn btn-sm btn-primary" href="/Leads/Edit/@c.Id">Edit</a>
+  <a class="btn btn-sm btn-success" href="/Leads/Upload/@c.Id">Upload</a>
+  <button class="btn btn-sm btn-secondary btn-eye" data-type="lead" data-id="@c.Id">View</button>
+  <button class="btn btn-sm btn-danger btn-del" data-url="/Leads/Delete/@c.Id">Delete</button>
+</td>
+</tr>
+}
+</tbody>
+</table>
+@section Scripts{
+<script>
+$(function(){
+  $(".btn-del").on("click", async function(){
+    const url = $(this).data("url");
+    const ok = await Swal.fire({title:"Delete this lead and its images?", icon:"warning", showCancelButton:true, confirmButtonText:"Delete"});
+    if(!ok.isConfirmed) return;
+    const form = $('<form method="post" action="'+url+'"></form>');
+    form.append($('<input name="__RequestVerificationToken" type="hidden" />').val($('input[name="__RequestVerificationToken"]').val()));
+    $('body').append(form);
+    form.trigger('submit');
+  });
+  $(".btn-eye").on("click", async function(){
+    const id = $(this).data("id");
+    const type = $(this).data("type");
+    const res = await fetch(`/api/profile-images/${type}/${id}`);
+    const data = await res.json();
+    if(!data || data.length===0){ Swal.fire("No images","Nothing to show","info"); return; }
+    const idc = "carousel_"+Date.now();
+    let items = "";
+    for(let i=0;i<data.length;i++){
+      const x = data[i];
+      items += `<div class="carousel-item ${i===0?'active':''}">
+        <img class="d-block w-100" style="max-height:70vh;object-fit:contain" src="data:${x.mimeType};base64,${x.base64Data}" />
+      </div>`;
+    }
+    const html = `<div id="${idc}" class="carousel slide" data-bs-ride="carousel">
+      <div class="carousel-inner">${items}</div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#${idc}" data-bs-slide="prev"><span class="carousel-control-prev-icon" aria-hidden="true"></span></button>
+      <button class="carousel-control-next" type="button" data-bs-target="#${idc}" data-bs-slide="next"><span class="carousel-control-next-icon" aria-hidden="true"></span></button>
+    </div>`;
+    await Swal.fire({html: html, width:"80%", showConfirmButton:false, showCloseButton:true});
+  });
+});
+</script>
+<form style="display:none">@Html.AntiForgeryToken()</form>
+}

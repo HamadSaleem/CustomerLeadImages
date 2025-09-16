@@ -1,0 +1,26 @@
+
+@{
+    ViewData["Title"] = "Home";
+    var totalCustomers = (int)(ViewBag.TotalCustomers ?? 0);
+    var totalLeads = (int)(ViewBag.TotalLeads ?? 0);
+}
+<div class="row g-3">
+  <div class="col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Customers</h5>
+        <p class="card-text">Total customers: @totalCustomers</p>
+        <a href="/Customers" class="btn btn-primary">Open</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Companies</h5>
+        <p class="card-text">Total companies: @totalLeads</p>
+        <a href="/Leads" class="btn btn-primary">Open</a>
+      </div>
+    </div>
+  </div>
+</div>
